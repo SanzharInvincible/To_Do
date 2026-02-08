@@ -2,10 +2,146 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>DormFix — Smart Dormitory Service</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="Style.css">
+<meta charset="UTF-8">
+<title>Tenebris</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+    background: #0f0b1e;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+/* КАРКАС */
+.app {
+    width: 360px;
+    height: 640px;
+    background: #17122b;
+    border-radius: 24px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ЭКРАНЫ */
+.screen {
+    flex: 1;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.screen.active {
+    display: block;
+    opacity: 1;
+}
+
+/* ЗАГОЛОВОК */
+.header {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* ПРИВЫЧКИ */
+.habit {
+    background: #221b3d;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.check {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid #7b6cff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.check.done {
+    transform: scale(1.1);
+    background: #7b6cff;
+    border-color: #7b6cff;
+}
+
+/* КНОПКА ДОБАВЛЕНИЯ */
+#add-task-btn {
+    margin-top: 10px;
+    padding: 12px;
+    width: 100%;
+    background: #7b6cff;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+#add-task-btn:hover {
+    transform: scale(1.05);
+}
+
+/* ПОЛЕ ВВОДА НОВОЙ ПРИВЫЧКИ */
+#new-task-container {
+    display: none;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: space-between;
+}
+
+#new-task-container input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 12px;
+    border: none;
+}
+
+#save-task-btn {
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: none;
+    background: #7b6cff;
+    color: white;
+    cursor: pointer;
+}
+
+/* НИЖНЕЕ МЕНЮ */
+.footer {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 10px;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.footer div {
+    cursor: pointer;
+}
+
+.footer .active {
+    color: #7b6cff;
+}
+</style>
+
 </head>
 
 <body>
