@@ -45,7 +45,6 @@ body {
 	position: relative;
 }
 
-/* ЭКРАНЫ */
 .screen {
 	flex: 1;
 	display: none;
@@ -58,14 +57,12 @@ body {
 	opacity: 1;
 }
 
-/* ЗАГОЛОВОК */
 .header {
 	font-size: 22px;
 	font-weight: 600;
 	margin-bottom: 20px;
 }
 
-/* ПРИВЫЧКИ */
 .habit {
 	background: #221b3d;
 	border-radius: 16px;
@@ -95,7 +92,6 @@ body {
 	border-color: #7b6cff;
 }
 
-/* КНОПКА ДОБАВЛЕНИЯ */
 #add-task-btn {
 	margin-top: 10px;
 	padding: 12px;
@@ -113,7 +109,6 @@ body {
 	transform: scale(1.05);
 }
 
-/* ПОЛЕ ВВОДА НОВОЙ ПРИВЫЧКИ */
 #new-task-container {
 	display: none;
 	gap: 10px;
@@ -137,7 +132,6 @@ body {
 	cursor: pointer;
 }
 
-/* НИЖНЕЕ МЕНЮ */
 .footer {
 	display: flex;
 	justify-content: space-around;
@@ -154,7 +148,6 @@ body {
 	color: #7b6cff;
 }
 
-/* AI WIDGET */
 
 .ai-widget {
 	position: absolute;
