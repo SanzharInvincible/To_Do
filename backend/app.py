@@ -45,18 +45,12 @@ def ask():
     except Exception as e:
         print("ERROR:", e)
         return jsonify({"reply": "Ошибка сервера"}), 500
-
-
-# 🔹 ВАЖНО — функция запуска Flask
 def start_flask():
     app.run(port=5001)
-
-
 if __name__ == "__main__":
     t = threading.Thread(target=start_flask)
     t.daemon = True
     t.start()
-
     webview.create_window(
         "To_Do app",
         "http://localhost:5001",
