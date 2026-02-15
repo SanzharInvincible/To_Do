@@ -21,7 +21,6 @@ body {
     color: white;
 }
 
-/* КАРКАС */
 .app {
     width: 360px;
     height: 640px;
@@ -32,27 +31,26 @@ body {
     flex-direction: column;
 }
 
-/* ЭКРАНЫ */
 .screen {
     flex: 1;
     display: none;
     opacity: 0;
     transition: opacity 0.3s ease;
+    overflow-y: auto;
 }
 
 .screen.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
     opacity: 1;
 }
 
-/* ЗАГОЛОВОК */
 .header {
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 20px;
 }
 
-/* ПРИВЫЧКИ */
 .habit {
     background: #221b3d;
     border-radius: 16px;
@@ -82,7 +80,6 @@ body {
     border-color: #7b6cff;
 }
 
-/* КНОПКА ДОБАВЛЕНИЯ */
 #add-task-btn {
     margin-top: 10px;
     padding: 12px;
@@ -100,7 +97,6 @@ body {
     transform: scale(1.05);
 }
 
-/* ПОЛЕ ВВОДА НОВОЙ ПРИВЫЧКИ */
 #new-task-container {
     display: none;
     gap: 10px;
@@ -124,7 +120,67 @@ body {
     cursor: pointer;
 }
 
-/* НИЖНЕЕ МЕНЮ */
+#chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+    overflow-y: auto;
+}
+
+.message {
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 85%;
+    word-wrap: break-word;
+    margin-bottom: 8px;
+}
+
+.message.user {
+    background: #7b6cff;
+    align-self: flex-end;
+    text-align: right;
+}
+
+.message.ai {
+    background: #221b3d;
+    align-self: flex-start;
+}
+
+#ai-input-container {
+    display: flex;
+    gap: 10px;
+}
+
+#ai-message-input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    border: none;
+    background: #221b3d;
+    color: white;
+    font-size: 14px;
+}
+
+#ai-message-input::placeholder {
+    color: #999;
+}
+
+#send-btn {
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: none;
+    background: #7b6cff;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+#send-btn:hover {
+    transform: scale(1.05);
+}
+
 .footer {
     display: flex;
     justify-content: space-around;
@@ -148,7 +204,6 @@ body {
 
 <div class="app">
 
-    <!-- ЭКРАН: СЕГОДНЯ -->
     <div class="screen active" id="today">
         <div class="header">Сегодня</div>
 
@@ -156,39 +211,67 @@ body {
             
         </div>
 
-        <!-- Контейнер для нового поля ввода -->
         <div id="new-task-container">
             <input type="text" id="new-task-input" placeholder="Название привычки">
             <button id="save-task-btn">Сохранить</button>
         </div>
 
-        <!-- Кнопка добавления -->
+
         <button id="add-task-btn">➕ Добавить привычку</button>
     </div>
 
-    <!-- ЭКРАН: СТАТИСТИКА -->
-    <div class="screen" id="stats">
-        <div class="header">Статистика</div>
-        <p>Здесь будет прогресс 📊</p>
+ 
+
+<div class="screen" id="stats">
+    <div class="header">Статистика </div>
+    <div id="stats-content" style="padding: 20px;">
+        <div style="background: #221b3d; border-radius: 16px; padding: 20px; margin-bottom: 15px; text-align: center;">
+            <div style="font-size: 14px; opacity: 0.8; margin-bottom: 10px;">Всего задач</div>
+            <div style="font-size: 32px; font-weight: bold; color: #7b6cff;" id="total-tasks">0</div>
+        </div>
+        
+        <div style="background: #221b3d; border-radius: 16px; padding: 20px; margin-bottom: 15px; text-align: center;">
+            <div style="font-size: 14px; opacity: 0.8; margin-bottom: 10px;"> Выполнено</div>
+            <div style="font-size: 32px; font-weight: bold; color: #7b6cff;" id="completed-tasks">0</div>
+        </div>
+        
+        <div style="background: #221b3d; border-radius: 16px; padding: 20px; margin-bottom: 15px; text-align: center;">
+            <div style="font-size: 14px; opacity: 0.8; margin-bottom: 10px;"> Осталось</div>
+            <div style="font-size: 32px; font-weight: bold; color: #7b6cff;" id="remaining-tasks">0</div>
+        </div>
+        
+        <div style="background: #221b3d; border-radius: 16px; padding: 20px; text-align: center;">
+            <div style="font-size: 14px; opacity: 0.8; margin-bottom: 10px;">Процент выполнения</div>
+            <div style="font-size: 32px; font-weight: bold; color: #7b6cff;" id="completion-percentage">0%</div>
+        </div>
+    </div>
+</div>
+
+    <div class="screen" id="ai-assistant">
+        <div class="header">AI Ассистент </div>
+        <div id="chat-container"></div>
+        <div id="ai-input-container">
+            <input type="text" id="ai-message-input" placeholder="Напишите сообщение...">
+            <button id="send-btn">/|\</button>
+        </div>
     </div>
 
-    <!-- ЭКРАН: ПРОФИЛЬ -->
     <div class="screen" id="profile">
         <div class="header">Профиль</div>
         <p>Настройки пользователя 👤</p>
     </div>
 
-    <!-- НИЖНЕЕ МЕНЮ -->
     <div class="footer">
         <div class="active" onclick="openScreen('today', this)">Сегодня</div>
         <div onclick="openScreen('stats', this)">Статистика</div>
+        <div onclick="openScreen('ai-assistant', this)">AI</div>
         <div onclick="openScreen('profile', this)">Профиль</div>
     </div>
 
 </div>
 
 <script>
-// Переключение экранов
+
 function openScreen(screenId, button) {
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
@@ -203,12 +286,10 @@ function openScreen(screenId, button) {
     button.classList.add('active');
 }
 
-// Отметка привычки как выполненной
 function toggleHabit(el) {
     el.classList.toggle('done');
 }
 
-// Добавление новой привычки
 const addBtn = document.getElementById('add-task-btn');
 const newTaskContainer = document.getElementById('new-task-container');
 const saveBtn = document.getElementById('save-task-btn');
@@ -233,6 +314,77 @@ saveBtn.addEventListener('click', () => {
 
         taskInput.value = '';
         newTaskContainer.style.display = 'none';
+    }
+});
+
+function loadStats() {
+    fetch('/stats')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('total-tasks').textContent = data.total;
+            document.getElementById('completed-tasks').textContent = data.completed;
+            document.getElementById('remaining-tasks').textContent = data.remaining;
+            
+            const percentage = data.total === 0 ? 0 : Math.round((data.completed / data.total) * 100);
+            document.getElementById('completion-percentage').textContent = percentage + '%';
+        });
+}
+
+async function updateTaskStatus(index, isDone) {
+    try {
+        await fetch(`/update-task/${index}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ done: isDone })
+        });
+        loadStats();
+    } catch(error) {
+        console.error('Error updating task:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadStats);
+
+const chatContainer = document.getElementById('chat-container');
+const aiInput = document.getElementById('ai-message-input');
+const sendBtn = document.getElementById('send-btn');
+
+function addMessage(text, sender) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
+    messageDiv.textContent = text;
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+async function sendMessage() {
+    const message = aiInput.value.trim();
+    if(message === '') return;
+
+    addMessage(message, 'user');
+    aiInput.value = '';
+
+    try {
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: message })
+        });
+
+        const data = await response.json();
+        addMessage(data.reply, 'ai');
+    } catch(error) {
+        addMessage('Ошибка при отправке запроса', 'ai');
+        console.error('Error:', error);
+    }
+}
+
+sendBtn.addEventListener('click', sendMessage);
+aiInput.addEventListener('keypress', (e) => {
+    if(e.key === 'Enter') {
+        sendMessage();
     }
 });
 </script>
