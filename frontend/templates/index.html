@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Tenebris</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app">
+
+    <div class="screen active" id="today">
+        <div class="header">Tasks</div>
+        <p>«Если ты не идешь сегодня, то будешь вынужден бежать завтра», «Дисциплина — залог победы», а также «Делай то, чего сделать не можешь»</p>
+        <div id="habit-list"></div>
+
+        <div id="new-task-container" style="display:none;">
+            <input type="text" id="new-task-input" placeholder="Name of habits">
+            <button id="save-task-btn">Save</button>
+        </div>
+
+        <button id="add-task-btn">➕ Add a habit</button>
+        <div class="zzz">
+            «Если ты не идешь сегодня, то будешь вынужден бежать завтра»<br>
+            «Дисциплина — залог победы»<br>
+            «Делай то, чего сделать не можешь»
+        </div>
+    </div>
+
+    <div class="screen" id="stats">
+        <div class="header">Statistics</div>
+        <div id="stats-content"></div>
+    </div>
+
+    <div class="screen" id="profile">
+        <div class="header">Settings</div>
+        <p>
+        This app is still in development! Stay tuned for updates.                                          
+        
+        </p>
+        <p> Tenebris ((Closed Beta!))</p>
+
+    </div>
+
+    <div class="screen" id="ai">
+        <div class="header">Tenebris AI 🤖</div>
+
+        <div style="margin-top:20px;">
+            <input type="text" id="ai-question" placeholder="Задай вопрос ИИ..." style="width:100%; padding:10px; border-radius:10px; border:none;">
+            <button id="ai-btn" style="margin-top:10px; width:100%;">Спросить</button>
+        </div>
+
+        <div id="ai-response" style="margin-top:20px;"></div>
+    </div>
+
+    <div class="footer">
+        <div class="active" onclick="openScreen('today', this)">Tasks</div>
+        <div onclick="openScreen('stats', this)">Statistics</div>
+        <div onclick="openScreen('ai', this)">AI</div>
+        <div onclick="openScreen('profile', this)">Settings</div>
+    </div>
+
+</div>
+
+<script>
+
+let habits = JSON.parse(localStorage.getItem("habits")) || [];
+
+const habitList = document.getElementById("habit-list");
+const statsContent = document.getElementById("stats-content");
+const addBtn = document.getElementById("add-task-btn");
+const newTaskContainer = document.getElementById("new-task-container");
+const saveBtn = document.getElementById("save-task-btn");
+const taskInput = document.getElementById("new-task-input");
+
+const aiBtn = document.getElementById("ai-btn");
+const questionInput = document.getElementById("ai-question");
+const aiResponse = document.getElementById("ai-response");
+
+function saveToStorage() {
+    localStorage.setItem("habits", JSON.stringify(habits));
+}
+
+function renderHabits() {
+    habitList.innerHTML = "";
+
+    habits.forEach((habit, index) => {
+        const div = document.createElement("div");
+        div.className = "habit";
+
+        div.innerHTML = `
+            <div>${habit.name}</div>
+            <div style="display:flex; gap:10px;">
+                <div class="check ${habit.done ? 'done' : ''}" onclick="toggleHabit(${index})">✓</div>
+                <div class="delete" onclick="deleteHabit(${index})">✕</div>
+            </div>
+        `;
+
+        habitList.appendChild(div);
+    });
+    updateStats();
+}
+function toggleHabit(index) {
+    habits[index].done = !habits[index].done;
+    saveToStorage();
+    renderHabits();
+}
+function deleteHabit(index) {
+    habits.splice(index, 1);
+    saveToStorage();
+    renderHabits();
+}
+saveBtn.addEventListener("click", () => {
+    const name = taskInput.value.trim();
+    if(name !== "") {
+        habits.push({ name: name, done: false });
+        taskInput.value = "";
+        newTaskContainer.style.display = "none";
+        saveToStorage();
+        renderHabits();
+    }
+});
+addBtn.addEventListener("click", () => {
+    newTaskContainer.style.display = "flex";
+    taskInput.focus();
+});
+aiBtn.addEventListener("click", async () => {
+    const question = questionInput.value.trim();
+
+    if(question === "") {
+        alert("Напиши вопрос");
+        return;
+    }
+
+    aiResponse.innerHTML = "⏳ Думаю...";
+
+    try {
+        const response = await fetch("/ai", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                habits: habits,
+                question: question
+            })
+        });
+        const data = await response.json();
+        aiResponse.innerHTML = data.reply;  <!-- ИСПРАВЛЕНО -->
+
+    } catch (error) {
+        aiResponse.innerHTML = "Ошибка сервера";
+    }
+});
+function updateStats() {
+    const total = habits.length;
+    const completed = habits.filter(h => h.done).length;
+    const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+    statsContent.innerHTML = `
+        <p>total habits: ${total}</p>
+        <p>completed: ${completed}</p>
+        <p>Progress: ${percent}%</p>
+    `;
+}
+function openScreen(screenId, button) {
+    document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+    });
+
+    document.getElementById(screenId).classList.add('active');
+    document.querySelectorAll('.footer div').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    button.classList.add('active');
+}
+renderHabits();
+</script>
+</body>
+</html>

@@ -1,33 +1,67 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
-from ai import ask_ai
+from dotenv import load_dotenv
+from openai import OpenAI
+import os
+import threading
+import webview
 
-app = Flask(__name__)
+load_dotenv()
+
+app = Flask(
+    __name__,
+    template_folder="../frontend/templates",
+    static_folder="../frontend/static"
+)
+
 CORS(app)
 
-tasks = []
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-@app.route("/tasks", methods=["GET"])
-def get_tasks():
-    return jsonify(tasks)
+@app.route("/")
+def home():
+    return render_template("index.html")
 
-@app.route("/add", methods=["POST"])
-def add_task():
-    data = request.json
-    tasks.append({
-        "title": data["title"],
-        "done": False
-    })
-    return jsonify(success=True)
+@app.route("/ai", methods=["POST"])
+def ask():
+    try:
+        data = request.get_json()
+        question = data.get("question")
 
-@app.route("/chat", methods=["POST"])
-def chat():
-    data = request.json
-    message = data["message"]
+        if not question:
+            return jsonify({"reply": "Напиши вопрос"}), 400
 
-    reply = ask_ai(message)
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "Ты умный и краткий AI ассистент."},
+                {"role": "user", "content": question}
+            ]
+        )
 
-    return jsonify({"reply": reply})
+        answer = response.choices[0].message.content
+        return jsonify({"reply": answer})
+
+    except Exception as e:
+        print("ERROR:", e)
+        return jsonify({"reply": "Ошибка сервера"}), 500
+
+
+# 🔹 ВАЖНО — функция запуска Flask
+def start_flask():
+    app.run(port=5001)
+
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    t = threading.Thread(target=start_flask)
+    t.daemon = True
+    t.start()
+
+    webview.create_window(
+        "To_Do app",
+        "http://localhost:5001",
+        width=375,
+        height=700
+    )
+
+    webview.start()
